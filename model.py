@@ -11,6 +11,18 @@ db = SQLAlchemy()
 #####################################################################
 # Model definitions
 
+class EIS_data(db.Model):
+
+    __tablename__ = "EIS_data"
+
+    title = db.Column(db.String(64), nullable=True)
+    document = db.Column(db.String(64), nullable=True)
+    epaCommentLetterDate = db.Column(db.String(64), nullable=True)
+    federalRegisterDate = db.Column(db.String(64), nullable=True)
+    agency = db.Column(db.String(64), nullable=True)
+    state = db.Column(db.String(64), nullable=True)
+    downloadDocuments = db.Column(db.String(64), nullable=True)
+
 #####################################################################
 # Helper functions
 
