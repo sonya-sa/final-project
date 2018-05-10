@@ -33,15 +33,15 @@ table = soup.find('table', class_='responsive-table')
 # csv_file.close()
 
 #prints EIS database table, including href
-#print table.prettify()
+print table.prettify()
 #print table.get_text()
 #for i in table.descendants:
     #print i
 
 #for i in table.children:
     #print i
-for link in table.find_all('a'):
-    print link.get('href')
+#for link in table.find_all('a'):
+    #print link.get('href')
 
 
 
