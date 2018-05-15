@@ -12,19 +12,24 @@ def load_EIS_data(epa_scrape_all_info):
     print "EIS Data"
 
     for row in open(epa_scrape_all_info):
+        if row[0] == "E":
+            continue
         row = row.rstrip()
 
+        print row.split(",")
+
         #unpack info; row.split(",")
-        eis_id, title, title_link, document, comment_letter_date_str, 
-        federal_register_date, comment_due_date_str, agency, state, download_documents, download_link, contact_name, contact_phone = row.split(",")
+        eis_id, title, title_link, document, comment_letter_date_str, federal_register_date, comment_due_date_str, agency, state, download_documents, download_link, contact_name, contact_phone = row.split(",")
 
         #ensure strings are stored as datetime objects in database
         if comment_letter_date_str:
-            epa_comment_letter_date = datetime.datetime.strptime(comment_letter_date_str, "%m-%d-%y")
-        elif comment_due_date_str:
-            comment_due_date = datetime.datetime.strptime(comment_due_date_str, "%m-%d-%y")
+            epa_comment_letter_date = datetime.datetime.strptime(comment_letter_date_str, "%m/%d/%y")
         else:
             epa_comment_letter_date = None
+        
+        if comment_due_date_str:
+            comment_due_date = datetime.datetime.strptime(comment_due_date_str, "%m/%d/%y")
+        else:
             comment_due_date = None
 
         #note: this does not include links
@@ -44,5 +49,5 @@ if __name__ == "__main__":
     connect_to_db(app)
     db.create_all()
 
-    epa_scrape_all_info = "final-project/epa_scrape_all_info.csv"
+    epa_scrape_all_info = "epa_scrape_all_info.csv"
     load_EIS_data(epa_scrape_all_info)
