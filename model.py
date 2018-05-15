@@ -21,18 +21,19 @@ class EIS_data(db.Model):
 
     __tablename__ = "EIS_data"
 
-    eis_id = db.Column(db.Integer, autoincrement = True, primary_key = True)
+    eis_id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(150), nullable=True)
     title_link = db.Column(db.String(150), nullable =True)
     document = db.Column(db.String(50), nullable=True)
     epa_comment_letter_date = db.Column(db.DateTime, nullable=True)
     federal_register_date = db.Column(db.DateTime, nullable=True)
+    comment_due_date = db.Column(db.DateTime, nullable=True)
     agency = db.Column(db.String(50), nullable=True)
     state = db.Column(db.String(20), nullable=True)
     download_documents = db.Column(db.String(50), nullable=True)
     download_link = db.Column(db.String(150), nullable=True)
     
-
+    #this is useful for debugging; instead of the object location in memory, we get the following info
     def __repr__(self):
         """Provide helpful representation when printed."""
 
