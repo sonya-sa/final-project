@@ -16,29 +16,21 @@ page = requests.get("https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/s
 #creates an instance of the BeautifulSoup class to parse
 soup = BeautifulSoup(page.content, 'html.parser')
 
+#list comprehension used to parse multiple pages
+#pg1, pg2, pg3 = (BeautifulSoup(requests.get(page).content, "html.parser"), for page in ["https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?search=&commonSearch=openComment#results", "https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?d-446779-p=2&search=&commonSearch=openComment#results", "https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?d-446779-p=3&search=&commonSearch=openComment#results"])
+#urls = ["https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?search=&commonSearch=openComment#results", "https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?d-446779-p=2&search=&commonSearch=openComment#results", "https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search;jsessionid=429DC8B149384A480DA14E00931C70D9?d-446779-p=3&search=&commonSearch=openComment#results"]
+#soup = (BeautifulSoup(requests.get(page).content, "html.parser") for page in urls)
+
 #find all information for table
 table = soup.find('table', class_='responsive-table')
 
 rows = table.find('tbody').findAll('tr')
 
-#     #add values to csv file by unpacking values into columns; nest in for loop
-#     csv_writer.writerow([title, link, fed_reg_date, agency, state, downloads])
-
-# csv_file.close()
-
 #prints EIS database table, including href
 #print table.prettify()
 #print table.get_text()
-#for i in table.descendants:
-    #print i
 
-#for i in table.children:
-    #print i
-#<<<<<<< HEAD
-#for link in table.find_all('a'):
-    #print link.get('href')
-
-
+#add values to csv file by unpacking values into columns; nest in for loop
 for row in rows:
     columns = row.findAll('td')
 
@@ -52,6 +44,8 @@ for row in rows:
     download_docs = columns[6].get_text().strip()
     download_docs_link = columns[6].find('a').get('href')
 
+    #writes column values to csv
     csv_writer.writerow([title, 'https://cdxnodengn.epa.gov' + title_link, document, epa_comment_date, fed_reg_date, agency, state, download_docs, 'https://cdxnodengn.epa.gov' + download_docs_link])
 
+#closes cvs; done writing values
 csv_file.close()
