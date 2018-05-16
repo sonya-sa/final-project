@@ -16,8 +16,6 @@ def load_EIS_data(epa_scrape_all_info):
             continue
         row = row.rstrip()
 
-        print row.split(",")
-
         #unpack info; row.split(",")
         eis_id, title, title_link, document, comment_letter_date_str, federal_register_date, comment_due_date_str, agency, state, download_documents, download_link, contact_name, contact_phone = row.split(",")
 
