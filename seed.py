@@ -33,10 +33,10 @@ def load_EIS_data(epa_scrape_all_info):
             comment_due_date = None
 
         #note: this does not include links
-        projects = EIS_data(eis_id=eis_id, title=title,
+        projects = EIS_data(eis_id=eis_id, title=title, title_link=title_link,
                             document=document, epa_comment_letter_date=epa_comment_letter_date, 
                             federal_register_date=federal_register_date, comment_due_date=comment_due_date, 
-                            agency=agency, state=state) 
+                            agency=agency, state=state, download_link=download_link) 
 
         #Add to the session to store info
         db.session.add(projects)
