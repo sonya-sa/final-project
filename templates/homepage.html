@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html>
 <head>
     <title>EIS Tracker</title>
@@ -6,4 +6,55 @@
 <body>
     EIS Tracker
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My EIS Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 400px;
+        width: 100%
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My EIS Map</h1>
+    <div id="map"></div>
+
+    <div class="projectData">
+        {{ projects_in_ca }}
+    </div>
+    <script>
+      //var map;
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 37.7749, lng: -122.4194},
+          zoom: 6
+        });
+
+        //sacramento (eis: "Mather Specific Plan Project")
+        {%  for state in projects_by_state %}
+            var marker_{{ state }} = new google.maps.Marker({
+                position: {{ state_coordinates[state] }},//{lat:38.5816, lng:-121.4944},
+                map: map,
+                label: '{{ projects_by_state[state]|length }}'
+            });
+        {% endfor %}
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"
+    async defer></script>
+  </body>
 </html>
