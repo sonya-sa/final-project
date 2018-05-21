@@ -29,7 +29,7 @@ class EIS_data(db.Model):
     federal_register_date = db.Column(db.DateTime, nullable=True)
     comment_due_date = db.Column(db.DateTime, nullable=True)
     agency = db.Column(db.String(50), nullable=True)
-    state = db.Column(db.String(50), nullable=True)
+    #state = db.Column(db.String(50), nullable=True)
     download_documents = db.Column(db.String(50), nullable=True)
     download_link = db.Column(db.String(1000), nullable=True)
     
@@ -39,6 +39,48 @@ class EIS_data(db.Model):
 
         return "<Project title={} state={}>".format(self.title,
                                                self.state)
+
+class State(db.Model):
+    """All states"""
+
+    __tablename__ = "states"
+
+    state_id = db.Column(db.String(3), primary_key= True)
+    geo_lat = db.Column(db.Float(15), nullable=False)
+    geo_long = db.Column(db.Float(15), nullable=False)
+
+    #this is useful for debugging; instead of the object location in memory, we get the following info
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<State state_id={}>".format(self.state_id)
+
+class Project_State(db.Model):
+
+    __tablename__ = "project_state"
+
+    project_state_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    state_id = db.Column(db.String, db.ForeignKey('states.state_id'), nullable=False)
+    eis_id = db.Column(db.Integer, db.ForeignKey('eis_data.eis_id'), nullable=False)
+
+    # Defines relationship to eis_data
+    eis_info = db.relationship("EIS_data",
+                           backref=db.backref("project_state",
+                                              order_by=project_state_id))
+
+
+    # Defines relationship to 
+    state = db.relationship("State",
+                            backref=db.backref("project_state",
+                                               order_by=project_state_id))
+
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Project States project_state_id= {} state_id={}>".format(self.project_state_id, self.state_id)
+
+#add relationship and back ref
 
 #####################################################################
 # Helper functions

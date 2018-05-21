@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, EIS_data
+from model import connect_to_db, db, EIS_data, State, Project_State
 
 app = Flask(__name__)
 
@@ -23,20 +23,24 @@ def index():
     # Grab data from the database
     # Format data if necessary to make it easy to render
     # Pass data to jinja template
-    projects_in_ca = EIS_data.query.filter_by(state='CA').all()
+    # projects_in_ca = EIS_data.query.filter_by(state='CA').all()
+    # print projects_in_ca
 
-    unique_states = EIS_data.query.filter_by(state=state).distinct()
+    # unique_states = EIS_data.query.filter_by(state=state).distinct()
 
-    for state in unique_states:
-        state_dict[state] = #query for all projects in this state
+    # #create diction of unique states
+    # state_dict = {}
 
-    print unique_states
-    #query for projects in state
-    projects_in_state
-    #create diction of unique states
-    state_dict = {unique_states: projects_in_state}
+    # #query for projects in state
+    # for state in unique_states:
+    #     #query for all projects in this state
+    #     state_dict[state] = EIS_data.query.filter_by(state=state).all()
 
-    return render_template("homepage.html", projects_in_ca=projects_in_ca)
+    #print state_dict
+
+
+    return render_template("homepage.html")
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point

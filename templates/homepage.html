@@ -34,25 +34,19 @@
     <div id="map"></div>
 
     <div class="projectData">
-        {{ projects_in_ca }}
+     <!--  /create another for loop/ -->
     </div>
     <script>
-      //var map;
       function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.7749, lng: -122.4194},
           zoom: 6
         });
-
-        //sacramento (eis: "Mather Specific Plan Project")
-        {%  for state in projects_by_state %}
-            var marker_{{ state }} = new google.maps.Marker({
-                position: {{ state_coordinates[state] }},//{lat:38.5816, lng:-121.4944},
-                map: map,
-                label: '{{ projects_by_state[state]|length }}'
+          var marker = new google.maps.Marker({
+              position: {lat: 38.5816, lng: -121.4944},
+              title: 'EIS Tracker',
+              map: map
             });
-        {% endfor %}
-      }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"
     async defer></script>
