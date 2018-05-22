@@ -42,12 +42,15 @@
           center: {lat: 39.8283, lng: -98.5795},
           zoom: 4
         });
+
+        {% for state_tuple in states_with_projects %}
           var marker = new google.maps.Marker({
-              position: {lat: 39.8283, lng: -98.5795},
+              position: {lat: {{state_tuple[0].geo_lat}}, lng: {{state_tuple[0].geo_long}}},
               title: 'EIS Tracker',
               map: map,
-              label: '{{all_projects|length}}',
+              label: '{{ state_tuple[1] }}',
             });
+        {% endfor %}
         }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"

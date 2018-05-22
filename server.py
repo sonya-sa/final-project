@@ -45,15 +45,18 @@ def index():
 
     states = State.query.all()
 
-    all_projects = []
+    states_with_projects = []
 
     for state in states[1:]:
-        all_projects.append((state.state_id,state.eis_data))
+    	# query for all projects in this state and put them into a dictionary.
+    	num_projects_in_state = len(Project_State.query.filter_by(state_id=state.state_id).all())
+    	if num_projects_in_state > 0:
+    		states_with_projects.append([state, num_projects_in_state])
 
 
+    print states_with_projects
 
-
-    return render_template("homepage.html") , all_projects=all_projects)
+    return render_template("homepage.html", states_with_projects=states_with_projects)
 
 
 if __name__ == "__main__":
