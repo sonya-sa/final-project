@@ -1,4 +1,4 @@
-"""Models and database functions for EIS Tracker project."""
+# """Models and database functions for EIS Tracker project."""
 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -33,6 +33,9 @@ class EIS_data(db.Model):
     download_documents = db.Column(db.String(50), nullable=True)
     download_link = db.Column(db.String(1000), nullable=True)
     
+    state = db.relationship("State", secondary="project_state",
+                       backref = "eis_data")
+
     #this is useful for debugging; instead of the object location in memory, we get the following info
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -60,19 +63,21 @@ class Project_State(db.Model):
     __tablename__ = "project_state"
 
     project_state_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    state_id = db.Column(db.String, db.ForeignKey('states.state_id'), nullable=False)
-    eis_id = db.Column(db.Integer, db.ForeignKey('eis_data.eis_id'), nullable=False)
+    state_id = db.Column(db.String, db.ForeignKey('states.state_id'))
+    eis_id = db.Column(db.Integer, db.ForeignKey('eis_data.eis_id'))
 
-    # Defines relationship to eis_data
-    eis_info = db.relationship("EIS_data",
-                           backref=db.backref("project_state",
-                                              order_by=project_state_id))
+    #Defines relationship to eis_data
+    # eis_info = db.relationship("EIS_data",
+    #                        backref=db.backref("project_state",
+    #                                           order_by=project_state_id))
+
+    #eis_info = db.relationship("EIS_data", backref="eis_data")
 
 
     # Defines relationship to 
-    state = db.relationship("State",
-                            backref=db.backref("project_state",
-                                               order_by=project_state_id))
+    # state = db.relationship("State",
+    #                         backref=db.backref("project_state",
+    #                                            order_by=project_state_id))
 
 
     def __repr__(self):

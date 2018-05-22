@@ -2,7 +2,7 @@
 
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, EIS_data, State, Project_State
@@ -38,8 +38,22 @@ def index():
 
     #print state_dict
 
+    #get all projects and their info
+    # all_projects = Project_State.query.filter_by(State.state_id).all()
 
-    return render_template("homepage.html")
+    # project_in_state = EIS_data.query.group_by(EIS_data.project_state).all()
+
+    states = State.query.all()
+
+    all_projects = []
+
+    for state in states[1:]:
+        all_projects.append((state.state_id,state.eis_data))
+
+
+
+
+    return render_template("homepage.html") , all_projects=all_projects)
 
 
 if __name__ == "__main__":

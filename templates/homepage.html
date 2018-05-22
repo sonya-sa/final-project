@@ -38,15 +38,17 @@
     </div>
     <script>
       function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 37.7749, lng: -122.4194},
-          zoom: 6
+        let map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 39.8283, lng: -98.5795},
+          zoom: 4
         });
           var marker = new google.maps.Marker({
-              position: {lat: 38.5816, lng: -121.4944},
+              position: {lat: 39.8283, lng: -98.5795},
               title: 'EIS Tracker',
-              map: map
+              map: map,
+              label: '{{all_projects|length}}',
             });
+        }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"
     async defer></script>
