@@ -37,20 +37,55 @@
      <!--  /create another for loop/ -->
     </div>
     <script>
+      window.state_project_map = {};
+
+      function showProjectDataForState(state) {
+        const projects = state_project_map[state];
+
+        const projectDisplayEl = document.querySelector('.projectData');
+
+        let projectDisplayElInnerHtml = '';
+        for (let project of projects) {
+          projectDisplayElInnerHtml += '<h2>Project</h2>';
+          
+          for (let property in project) {
+            projectDisplayElInnerHtml += '<div>' + property + ': ' + project[property] + '</div>';
+          }
+        }
+
+        projectDisplayEl.innerHTML = projectDisplayElInnerHtml;
+      }
+
       function initMap() {
-        let map = new google.maps.Map(document.getElementById('map'), {
+        const map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 39.8283, lng: -98.5795},
           zoom: 4
         });
 
         {% for state_tuple in states_with_projects %}
-          var marker = new google.maps.Marker({
+          const marker_{{state_tuple[0].state_id}} = new google.maps.Marker({
               position: {lat: {{state_tuple[0].geo_lat}}, lng: {{state_tuple[0].geo_long}}},
               title: 'EIS Tracker',
               map: map,
-              label: '{{ state_tuple[1] }}',
+              label: '{{ state_tuple[1]|length }}',
             });
+
+          projects_in_state = [];
+            {% for project in state_tuple[1] %}
+              var project = {};
+              {% for attr, value in project.__dict__.iteritems() %}
+                project['{{attr}}'] = '{{value}}';
+              {% endfor %}
+              projects_in_state.push(project);
+            {% endfor %}
+
+          state_project_map['{{state_tuple[0].state_id}}'] = projects_in_state;
+
+          marker_{{state_tuple[0].state_id}}.addListener('click', function() {
+              showProjectDataForState('{{state_tuple[0].state_id}}');
+          });
         {% endfor %}
+        console.log('state_project_map: ' + JSON.stringify(state_project_map));
         }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"

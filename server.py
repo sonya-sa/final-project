@@ -49,12 +49,12 @@ def index():
 
     for state in states[1:]:
     	# query for all projects in this state and put them into a dictionary.
-    	num_projects_in_state = len(Project_State.query.filter_by(state_id=state.state_id).all())
-    	if num_projects_in_state > 0:
-    		states_with_projects.append([state, num_projects_in_state])
-
-
-    print states_with_projects
+    	state_project_relationships = Project_State.query.filter_by(state_id=state.state_id).all()
+    	if len(state_project_relationships) > 0:
+    		projects_in_state = []
+    		for relationship in state_project_relationships:
+    			projects_in_state += EIS_data.query.filter_by(eis_id=relationship.eis_id).all()
+    		states_with_projects.append([state, projects_in_state])
 
     return render_template("homepage.html", states_with_projects=states_with_projects)
 
