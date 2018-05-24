@@ -1,5 +1,7 @@
 """EIS Tracker"""
 
+import datetime
+
 from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, redirect, request, flash, session, jsonify
@@ -48,14 +50,32 @@ def index():
     states_with_projects = []
 
     for state in states[1:]:
-    	# query for all projects in this state and put them into a dictionary.
-    	state_project_relationships = Project_State.query.filter_by(state_id=state.state_id).all()
-    	if len(state_project_relationships) > 0:
-    		projects_in_state = []
-    		for relationship in state_project_relationships:
-    			projects_in_state += EIS_data.query.filter_by(eis_id=relationship.eis_id).all()
-    		states_with_projects.append([state, projects_in_state])
+        # query for all projects in this state and put them into a dictionary.
+        state_project_relationships = Project_State.query.filter_by(state_id=state.state_id).all()
+        if len(state_project_relationships) > 0:
+            projects_in_state = []
+            for relationship in state_project_relationships:
+                projects_in_state += EIS_data.query.filter_by(eis_id=relationship.eis_id).all()
 
+            for project in projects_in_state:
+                #project.comment_due_date = project.comment_due_date.strftime('%m/%d/%y')
+                print project
+                print type(project.comment_due_date)
+            states_with_projects.append([state, projects_in_state])
+
+                # print type(project.comment_due_date)
+                # if type(project.comment_due_date) == 'datetime.datetime':
+                #     project.comment_due_date =  project.comment_due_date.strftime('%m/%d/%y')
+                #     print type(project.comment_due_date)
+                #     print project.comment_due_date 
+    #         states_with_projects.append([state, projects_in_state])
+    # for state, projects in states_with_projects:
+    #     print state
+    #     for project in projects:
+    #         project.comment_due_date =  project.comment_due_date.strftime('%m/%d/%y') 
+    #         print project.comment_due_date
+    #for loop over each object within list of objects
+    #create dict = name as they appear on table, projects info 
     return render_template("homepage.html", states_with_projects=states_with_projects)
 
 

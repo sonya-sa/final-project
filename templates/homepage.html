@@ -36,6 +36,22 @@
     <div class="projectData">
      <!--  /create another for loop/ -->
     </div>
+    <script>window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+      return t;
+
+    }(document, "script", "twitter-wjs"));</script>
     <script>
       window.state_project_map = {};
 
@@ -46,11 +62,18 @@
 
         let projectDisplayElInnerHtml = '';
         for (let project of projects) {
-          projectDisplayElInnerHtml += '<h2>Project</h2>';
+          console.log(project);
+          projectDisplayElInnerHtml += `<h2>Project: ${project.title}</h2>`;
           
           for (let property in project) {
             projectDisplayElInnerHtml += '<div>' + property + ': ' + project[property] + '</div>';
           }
+
+          // twitter button with custome text to include project details
+          projectDisplayElInnerHtml += '<a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=' + '@' + project.agency + ' , ' + 'EIS ID:' + project.eis_id + '"> Tweet</a>';
+          //projectDisplayElInnerHtml += '<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="my custom text"' +
+          // ' data-show-count="false">Tweet</a>'
+
         }
 
         projectDisplayEl.innerHTML = projectDisplayElInnerHtml;
@@ -74,6 +97,7 @@
             {% for project in state_tuple[1] %}
               var project = {};
               {% for attr, value in project.__dict__.iteritems() %}
+                console.log(project['{{attr}}'] = '{{value}}');
                 project['{{attr}}'] = '{{value}}';
               {% endfor %}
               projects_in_state.push(project);
@@ -87,8 +111,10 @@
         {% endfor %}
         console.log('state_project_map: ' + JSON.stringify(state_project_map));
         }
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"
     async defer></script>
+    <!-- <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text = "my custom text" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
   </body>
 </html>
