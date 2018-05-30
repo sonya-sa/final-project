@@ -22,60 +22,49 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    # Grab data from the database
-    # Format data if necessary to make it easy to render
-    # Pass data to jinja template
-    # projects_in_ca = EIS_data.query.filter_by(state='CA').all()
-    # print projects_in_ca
-
-    # unique_states = EIS_data.query.filter_by(state=state).distinct()
-
-    # #create diction of unique states
-    # state_dict = {}
-
-    # #query for projects in state
-    # for state in unique_states:
-    #     #query for all projects in this state
-    #     state_dict[state] = EIS_data.query.filter_by(state=state).all()
-
-    #print state_dict
-
-    #get all projects and their info
-    # all_projects = Project_State.query.filter_by(State.state_id).all()
-
-    # project_in_state = EIS_data.query.group_by(EIS_data.project_state).all()
-
+    #State table has relationship to EIS_data table
+    #returns all projects with their EIS_data and State info(geo_lat/geo_long/state_id)
+    # __repr__ displays project title and state
     states = State.query.all()
 
+    #returns all projects in states with projects
+    # prints ([state, projects_in_state])
     states_with_projects = []
 
+    #iterates through all projects starting from index 1
+    #index 0 of dataset (epa_scrape_all_info) shows column titles; thus, we skip
     for state in states[1:]:
-        # query for all projects in this state and put them into a dictionary.
+
+        # query for all projects in this state
+        # relationship between Project_State table and EIS_data allows access to project info
+        # e.g return: [<Project States project_state_id= 13 state_id=CA>, <Project States project_state_id= 18 state_id=CA>, <Project States project_state_id= 28 state_id=CA>]
+        #<Project title=Mather Specific Plan Project state=[<State state_id=CA>]>
+        #<type 'datetime.datetime'>
+        #<Project title=Nevada and Northeastern California Greater Sage-Grouse Draft Resource Management Plan Amendment and Environmental Impact Statement state=[<State state_id=CA>, <State state_id=NV>]>
+        #<type 'datetime.datetime'>
+        #<Project title=Pure Water San Diego Program North City Project state=[<State state_id=CA>]>
+        #<type 'datetime.datetime'>
         state_project_relationships = Project_State.query.filter_by(state_id=state.state_id).all()
+
+        #if state has projects, enter for loop
         if len(state_project_relationships) > 0:
+
+            #returns all projects in state
+            #e.g. [<Project title=Southern Gardens Citrus Nursery LLC Permit to Release Genetically Engineered Citrus tristeza virus Draft Environmental Impact Statement state=[<State state_id=NAT>]>]
             projects_in_state = []
+
+            #for each project in state, access EIS_data table by relationship
+            #relationship: project_state_id = state_id
+            #e.g. <Project States project_state_id= 24 state_id=AK>
             for relationship in state_project_relationships:
+
+                #query our EIS_data by eis_id and grab all info related to that project
+                #place project details into list
                 projects_in_state += EIS_data.query.filter_by(eis_id=relationship.eis_id).all()
 
-            for project in projects_in_state:
-                #project.comment_due_date = project.comment_due_date.strftime('%m/%d/%y')
-                print project
-                print type(project.comment_due_date)
+
             states_with_projects.append([state, projects_in_state])
 
-                # print type(project.comment_due_date)
-                # if type(project.comment_due_date) == 'datetime.datetime':
-                #     project.comment_due_date =  project.comment_due_date.strftime('%m/%d/%y')
-                #     print type(project.comment_due_date)
-                #     print project.comment_due_date 
-    #         states_with_projects.append([state, projects_in_state])
-    # for state, projects in states_with_projects:
-    #     print state
-    #     for project in projects:
-    #         project.comment_due_date =  project.comment_due_date.strftime('%m/%d/%y') 
-    #         print project.comment_due_date
-    #for loop over each object within list of objects
-    #create dict = name as they appear on table, projects info 
     return render_template("homepage.html", states_with_projects=states_with_projects)
 
 

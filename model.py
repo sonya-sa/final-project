@@ -33,6 +33,7 @@ class EIS_data(db.Model):
     download_documents = db.Column(db.String(50), nullable=True)
     download_link = db.Column(db.String(1000), nullable=True)
     
+    #defines relationship to State table and Project State table
     state = db.relationship("State", secondary="project_state",
                        backref = "eis_data")
 
@@ -66,35 +67,21 @@ class Project_State(db.Model):
     state_id = db.Column(db.String, db.ForeignKey('states.state_id'))
     eis_id = db.Column(db.Integer, db.ForeignKey('eis_data.eis_id'))
 
-    #Defines relationship to eis_data
-    # eis_info = db.relationship("EIS_data",
-    #                        backref=db.backref("project_state",
-    #                                           order_by=project_state_id))
-
-    #eis_info = db.relationship("EIS_data", backref="eis_data")
-
-
-    # Defines relationship to 
-    # state = db.relationship("State",
-    #                         backref=db.backref("project_state",
-    #                                            order_by=project_state_id))
-
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return "<Project States project_state_id= {} state_id={}>".format(self.project_state_id, self.state_id)
 
-#add relationship and back ref
 
 #####################################################################
 # Helper functions
 
-def connect_to_db(app):
+def connect_to_db(app, db_uri='postgresql:///EIS_data'):
     """Connect the database to our Flask app."""
 
     # Configure to use our PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///EIS_data' #location of db
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri #location of db
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #autosets to True
     db.app = app #instantiates app; connects app to db  
     db.init_app(app) #make active connection

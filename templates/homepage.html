@@ -1,13 +1,3 @@
-<!-- <!doctype html>
-<html>
-<head>
-    <title>EIS Tracker</title>
-</head>
-<body>
-    EIS Tracker
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -34,10 +24,18 @@
     <div id="map"></div>
 
     <div class="projectData">
-     <!--  /create another for loop/ -->
+      <div id="fb-root"></div>
+<script>window.facebook = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
     </div>
+    <!-- creates twitter widget that shows feed based on hashtag preference -->
     <script>window.twttr = (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0],
+      let js, fjs = d.getElementsByTagName(s)[0],
         t = window.twttr || {};
       if (d.getElementById(id)) return t;
       js = d.createElement(s);
@@ -53,68 +51,107 @@
 
     }(document, "script", "twitter-wjs"));</script>
     <script>
+      //dictionary of states with projects and their details
       window.state_project_map = {};
 
+      // function used to display project info on page
       function showProjectDataForState(state) {
+
+        // sets variable to projects of a given state
         const projects = state_project_map[state];
 
+        // queries DOM and obtains projectdata element
+        // binds that data to a variable used to display elements
         const projectDisplayEl = document.querySelector('.projectData');
 
         let projectDisplayElInnerHtml = '';
+        
+        // for each project in a list of projects of a given state
         for (let project of projects) {
-          console.log(project);
+
+          // sets inner html to display the project's title using jquery
           projectDisplayElInnerHtml += `<h2>Project: ${project.title}</h2>`;
           
+          // for each property of a project (e.g. title, agency, etc.)
           for (let property in project) {
             projectDisplayElInnerHtml += '<div>' + property + ': ' + project[property] + '</div>';
           }
 
-          // twitter button with custome text to include project details
+          // add twitter button with custom text to include project details
           projectDisplayElInnerHtml += '<a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=' + '@' + project.agency + ' , ' + 'EIS ID:' + project.eis_id + '"> Tweet</a>';
+
           //projectDisplayElInnerHtml += '<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="my custom text"' +
           // ' data-show-count="false">Tweet</a>'
-
+          projectDisplayElInnerHtml += ' ' + '<a class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></a>'; 
+  
         }
 
         projectDisplayEl.innerHTML = projectDisplayElInnerHtml;
       }
-
+      // creates google map centered at the center of the contiguous US
       function initMap() {
         const map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 39.8283, lng: -98.5795},
           zoom: 4
         });
-
+      // iterates over list of states with projects to create markers based off of (state, projects in state)
+      // state_tuple is actually a list of [state, projects in that state]
         {% for state_tuple in states_with_projects %}
+        // makes a marker based off of state
           const marker_{{state_tuple[0].state_id}} = new google.maps.Marker({
+            // for each state, the geo_lat and geo_long attributes from State table are passed in google maps function
               position: {lat: {{state_tuple[0].geo_lat}}, lng: {{state_tuple[0].geo_long}}},
               title: 'EIS Tracker',
               map: map,
+              //marker shows the number of projects for that state
               label: '{{ state_tuple[1]|length }}',
             });
 
           projects_in_state = [];
+
+          //iterates over each project associated with a state
             {% for project in state_tuple[1] %}
+            // empty dict
+            // breaks when let is used
               var project = {};
+
+              // attr is the title, agency, title_link, etc.
+              // value is the projects specific details in accordance with those attributes
+              // information is stored in project dictionary
               {% for attr, value in project.__dict__.iteritems() %}
-                console.log(project['{{attr}}'] = '{{value}}');
                 project['{{attr}}'] = '{{value}}';
+
               {% endfor %}
+              // adds project (a dict containting project details) to list of projects in that state (projects_in_state)
               projects_in_state.push(project);
+
             {% endfor %}
 
+          //creates a dictionary where key is state.state_id and sets that value to all projects in that state 
           state_project_map['{{state_tuple[0].state_id}}'] = projects_in_state;
 
+          // listens for clicks on state markers 
           marker_{{state_tuple[0].state_id}}.addListener('click', function() {
               showProjectDataForState('{{state_tuple[0].state_id}}');
           });
         {% endfor %}
+
+        // prints project details onto screen
         console.log('state_project_map: ' + JSON.stringify(state_project_map));
+
         }
 
     </script>
+    <!-- google maps api -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6VEBiqDbMmsZ4STInovtQdNwdqduCseI&callback=initMap"
     async defer></script>
+    <!-- twitter widget api -->
+    <a class="twitter-timeline"  href="https://twitter.com/hashtag/EnvironmentalImpactStatement" data-widget-id="999810728075771905">#EnvironmentalImpactStatement Tweets</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    
+    <!-- formatting for twitter button, but doesn't work when placed within for loop -->
     <!-- <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text = "my custom text" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+    <!-- Load Facebook SDK for JavaScript -->
+
   </body>
 </html>
